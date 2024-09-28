@@ -1,0 +1,10 @@
+## Title: CraftingFilters
+## Author: @SlLva
+## Version: 0.1
+## APIVersion: 101036
+
+## DependsOn: LibAddonMenu-2.0
+
+init.lua
+Main.lua
+UI.lua
