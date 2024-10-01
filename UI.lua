@@ -5,9 +5,15 @@ CF.UI = {}
 
 local WM = WINDOW_MANAGER
 
-function CF.UI.CreateSearchBox()
-    local CFSearchBox = _G[CF.name .. "CFSearchBox"]
+local CFSearchBox = _G[CF.name .. "CFSearchBox"]
 
+function CF.UI.clearSearch()
+    if not CFSearchBox then return end
+    CFSearchField:SetText("")
+    CFSearchBox:SetHidden(true)
+end
+
+function CF.UI.CreateSearchBox()
     if not CFSearchBox then
         local parentControl = GetControl("ZO_ProvisionerTopLevelNavigationContainerScroll")
         CFSearchBox = WM:CreateControlFromVirtual(CF.name .. "CFSearchBox", parentControl, "ZO_InventorySearchTemplate")
@@ -15,7 +21,7 @@ function CF.UI.CreateSearchBox()
         CFSearchBox:SetAnchor(RIGHT, parentControl, TOPRIGHT, 0, 20)
         CFSearchBox:SetDrawLayer(DL_CONTROLS)
     end
-
+    CFSearchBox:SetHidden(false)
     CFSearchField = CFSearchBox:GetNamedChild("Box")
     CFSearchFieldText = CFSearchField:GetNamedChild("Text")
 
