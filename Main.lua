@@ -26,18 +26,20 @@ local function filterResults()
         return
     end
 
+    local craftingInteractionType = GetCraftingInteractionType()
+    local recipeLists = PM:GetRecipeListData(craftingInteractionType)
     local requireIngredients = ZO_CheckButton_IsChecked(PROVISIONER.haveIngredientsCheckBox)
     local requireSkills = ZO_CheckButton_IsChecked(PROVISIONER.haveSkillsCheckBox)
     local results = 0
     local parent
 
-    for _, recipeList in pairs(CF.recipeLists) do
+    for _, recipeList in pairs(recipeLists) do
         for _, recipe in ipairs(recipeList.recipes) do
-            if recipe.requiredCraftingStationType == CF.craftingInteractionType and PROVISIONER.filterType == recipe.specialIngredientType then
+            if recipe.requiredCraftingStationType == craftingInteractionType and PROVISIONER.filterType == recipe.specialIngredientType then
                 if PROVISIONER:DoesRecipePassFilter(
                         recipe.specialIngredientType, requireIngredients, recipe.maxIterationsForIngredients,
                         requireSkills, recipe.tradeskillsLevelReqs, recipe.qualityReq,
-                        CF.craftingInteractionType, recipe.requiredCraftingStationType
+                        craftingInteractionType, recipe.requiredCraftingStationType
                     )
                     and matchFound(recipe.name:lower(), searchString) then
                     parent = parent or PROVISIONER.recipeTree:AddNode("ZO_ProvisionerNavigationHeader",
@@ -69,12 +71,6 @@ function CF.Main.updateSearch()
 end
 
 function CF.Main.RegisterEvents()
-    EM:RegisterForEvent(CF.name .. "StationInteract", EVENT_CRAFTING_STATION_INTERACT,
-        function(eventCode, craftSkill, sameStation)
-            CF.craftingInteractionType = GetCraftingInteractionType()
-            CF.recipeLists = PM:GetRecipeListData(CF.craftingInteractionType)
-            if #CF.recipeLists == 0 then return end
-            CF.UI.CreateSearchBox()
-        end)
+    EM:RegisterForEvent(CF.name .. "StationInteract", EVENT_CRAFTING_STATION_INTERACT, CF.UI.CreateSearchBox)
     EM:RegisterForEvent(CF.name .. "EndStationInteract", EVENT_END_CRAFTING_STATION_INTERACT, CF.UI.clearSearch)
 end
